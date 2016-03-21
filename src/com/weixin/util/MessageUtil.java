@@ -3,6 +3,7 @@ package com.weixin.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,12 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.thoughtworks.xstream.XStream;
+import com.weixin.po.Article;
+import com.weixin.po.Image;
+import com.weixin.po.ImageMessage;
+import com.weixin.po.Music;
+import com.weixin.po.MusicMessage;
+import com.weixin.po.NewsMessage;
 import com.weixin.po.TextMessage;
 
 public class MessageUtil {
@@ -23,15 +30,16 @@ public class MessageUtil {
 	public static final String MESSAGE_IMAGE = "image";
 	public static final String MESSAGE_VOICE = "voice";
 	public static final String MESSAGE_VIDEO = "video";
+	public static final String MESSAGE_MUSIC = "music";
 	public static final String MESSAGE_LINK = "link";
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_SHORTVIDEW = "shortvideo";
 	public static final String MESSAGE_EVENT = "event";
 	public static final String MESSAGE_SUBSCRIBE = "subscribe";
 	public static final String MESSAGE_UNSUBSCRIBE = "unsubscribe";
-	public static final String MESSAGE_CLICK = "click";
-	public static final String MESSAGE_VIEW = "view";
-	
+	public static final String MESSAGE_CLICK = "CLICK";
+	public static final String MESSAGE_VIEW = "VIEW";
+	public static final String MESSAGE_SCAN = "scancode_push";
 	/*
 	 * xml转为map集合
 	 * @param request
@@ -70,6 +78,36 @@ public class MessageUtil {
 		return xstream.toXML(textMessage);
 	}
 	/*
+	 * 
+	 * 图文消息转换为XML	
+	 */
+	public static String newsMessageToXml(NewsMessage newsMessage){
+		XStream xstream = new XStream();
+		xstream.alias("xml", newsMessage.getClass());
+		xstream.alias("item", new Article().getClass());
+		return xstream.toXML(newsMessage);
+	}
+	/*
+	 * 
+	 * 图片消息转换为XML	
+	 */
+	public static String imageMessageToXml(ImageMessage imageMessage){
+		XStream xstream = new XStream();
+		xstream.alias("xml", imageMessage.getClass());
+		xstream.alias("image", new Image().getClass());
+		return xstream.toXML(imageMessage);
+	}
+	/*
+	 * 
+	 * 音乐消息转换为XML	
+	 */
+	public static String musicMessageToXml(MusicMessage musicMessage){
+		XStream xstream = new XStream();
+		xstream.alias("xml", musicMessage.getClass());
+		xstream.alias("Music", new Music().getClass());
+		return xstream.toXML(musicMessage);
+	}
+	/*
 	 * 拼接文本消息
 	 * 
 	 * 
@@ -85,29 +123,91 @@ public class MessageUtil {
 		return textMessageToXml(text);
 		
 	}
-	
+	public static String subscribeText(String nickName){
+		StringBuffer sb = new StringBuffer();
+		sb.append(nickName);
+		sb.append("，非常感谢您的关注！\n");
+		sb.append("本公众号本着“为人民服务，做好事不留名”的精神，提供各类精品资源！\n");
+		return sb.toString();
+	}
+
 	/*
-	 * 主菜单
-	 * 
+	 * 主菜单 
 	 * 
 	 */
 	public static String menuText(){
 		StringBuffer sb = new StringBuffer();
-		sb.append("欢迎您的关注，请按照菜单提示操作：\n");
-		sb.append("1-公司介绍\n");
-		sb.append("2-产品介绍\n");
-		sb.append("回复？调出此菜单。");
+		sb.append("抱歉，五杀电影院正在建设中\n");
+		sb.append("可点击进入影院观看电影！");
 		return sb.toString();
 	}
-	public static String firstText(){
-		StringBuffer sb = new StringBuffer();
-		sb.append("本公司主要经营企业水泵，包括压力泵、深井泵等。rg.apache.catalina.core.StandardContext reload\n");
-		return sb.toString();
+
+
+	public static String initNewsMessage(String toUserName,String fromUserName){
+		String message = null;
+		List<Article> articleList = new ArrayList<Article>();
+		NewsMessage newsMessage = new NewsMessage();
+		
+		Article article = new Article();
+		article.setTitle("通源介绍");
+		article.setDescription("2BEX系列水环真空泵，工作介质为常温清水，采用单级单作用的结构形式，具有结构简单，运行可靠，高效节能的优点，并能适用排水量大、载荷冲击波动等恶劣工况。");
+		article.setPicUrl("http://mmbiz.qpic.cn/mmbiz/Iic7h4DqJZyXVyszt4tiaEuBLNLrIG9PRjXABANCFXjM0hfhQhxT4mc9F0e9edn1jYia8meey80rfA1cp0IibRZEvQ/640?wx_fmt=jpeg&wxfrom=5");
+		article.setUrl("www.baidu.com");
+		
+		articleList.add(article);
+		
+		Article article2 = new Article();
+		article2.setTitle("第二篇通源介绍");
+		article2.setDescription("通源泵业有限公司真空泵，工作介质为常温清水，采用单级单作用的结构形式，具有结构简单，运行可靠，高效节能的优点，并能适用排水量大、载荷冲击波动等恶劣工况。");
+		article2.setPicUrl("http://mmbiz.qpic.cn/mmbiz/Iic7h4DqJZyUyGaNiaxqFxibTicG6dwOIoutYWPrb7xZicg1AFjycrTsZTAyavnlp9JPO09ibjnDtYW3LYj1AhUg27jw/640?wx_fmt=jpeg&wxfrom=5");
+		article2.setUrl("www.baidu.com");
+		articleList.add(article2);
+		
+		newsMessage.setFromUserName(toUserName);
+		newsMessage.setToUserName(fromUserName);
+		newsMessage.setArticles(articleList);
+		newsMessage.setCreateTime("2016-3-7");
+		newsMessage.setArticleCount(articleList.size());
+		newsMessage.setMsgType("news");
+		
+		message = MessageUtil.newsMessageToXml(newsMessage);
+		return message;
 	}
-	public static String secondText(){
-		StringBuffer sb = new StringBuffer();
-		sb.append("产品包括vv，xx。。。这是一款新研发的抽水泵，适合大面积农产品灌溉的作业场景。\n");
-		return sb.toString();
+	
+	public static String initImageMessage(String toUserName,String fromUserName){
+		String message = null;
+		Image image = new Image();
+		image.setMediaId("JiF1AlIFT4TgrALeExilEKTh7kNeukc3SLwS215UrTFMufsUlXx57Sn2HmZ0XVO7");
+		ImageMessage im = new ImageMessage();
+		im.setFromUserName(toUserName);
+		im.setToUserName(fromUserName);
+		im.setCreateTime("2016-3-9");
+		im.setMsgType(MessageUtil.MESSAGE_IMAGE);
+		im.setImage(image);
+		
+		message = MessageUtil.imageMessageToXml(im);
+		return message;
+		
+	}
+	public static String initMusicMessage(String toUserName,String fromUserName){
+		String message = null;
+		Music music = new Music();
+		music.setTitle("test Music");
+		music.setDescription("test description");
+		music.setThumbMediaId("ABLgKOOwgusANliiMCrOfX55a5VabN0oTdx89MG6E4gCJJAYjrMSvA1PIUwMBmJx");
+		music.setMusicUrl("http://tongyuan.tunnel.qydev.com/Weixin/resource/Sleep Away.mp3");
+		music.setHQMusicUrl("http://tongyuan.tunnel.qydev.com/Weixin/resource/Sleep Away.mp3");
+		
+		MusicMessage mm = new MusicMessage();
+		mm.setFromUserName(toUserName);
+		mm.setToUserName(fromUserName);
+		mm.setCreateTime("2016-3-9");
+		mm.setMsgType(MessageUtil.MESSAGE_MUSIC);
+		mm.setMusic(music);
+
+		message = MessageUtil.musicMessageToXml(mm);
+		return message;
+		
 	}
 
 }

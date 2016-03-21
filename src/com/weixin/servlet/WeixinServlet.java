@@ -2,6 +2,8 @@ package com.weixin.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -11,9 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.DocumentException;
 
-import com.weixin.po.TextMessage;
+import com.weixin.data.UserData;
+import com.weixin.user.User;
 import com.weixin.util.CheckUtil;
 import com.weixin.util.MessageUtil;
+import com.weixin.util.WeixinUtil;
 
 public class WeixinServlet extends HttpServlet {
 	@Override
@@ -45,33 +49,41 @@ public class WeixinServlet extends HttpServlet {
 			String msgId = map.get("MsgId ");
 			
 			String message = null;
-			if(MessageUtil.MESSAGE_TEXT.equals(msgType)){
-				if("1".equals(content)){
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.firstText());
-				}else if("2".equals(content)){
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.secondText());
-				}else if("?".equals(content)){
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-				}else if("？".equals(content)){
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-				}	
-				else{
-					TextMessage text = new TextMessage();
-					text.setFromUserName(toUserName);
-					text.setToUserName(fromUserName);
-					text.setMsgType("text");
-					text.setCreateTime("2016-3-2");
-					text.setContent("您发送的消息是："+ content );
-					message = MessageUtil.textMessageToXml(text);
-					System.out.println(message);		
-				}			
+			if(MessageUtil.MESSAGE_TEXT.equals(msgType)){				
+				message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());											
 			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
-				String eventType = map.get("Event");
-				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-				}
+				String eventType = map.get("Event");				
+				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){					
+					String nickName = WeixinUtil.getUser(fromUserName).getNickname();
+					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.subscribeText(nickName));					
+					
+				}else if(MessageUtil.MESSAGE_CLICK.equals(eventType)){
+					String key = map.get("EventKey");
+					if(key.equals("21_qiandao")){
+						message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		 
+						User user = new User();
+						user = WeixinUtil.getUser(fromUserName);						
+						user.setLastSignTime(sdf.format(new Date()));						
+						UserData.addUser(user);
+						User user2 = new User();
+						user2 = WeixinUtil.getUser(fromUserName);						
+						user2.setLastSignTime(sdf.format(new Date()));						
+						UserData.addUser(user2);
+					}					
+				}else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){
+					String url = map.get("EventKey");
+					message = MessageUtil.initText(toUserName, fromUserName, url);
+				}else if(MessageUtil.MESSAGE_SCAN.equals(eventType)){
+					String key= map.get("EventKey");
+					message = MessageUtil.initText(toUserName, fromUserName,key);
+				}				
+			}else if(MessageUtil.MESSAGE_LOCATION.equals(msgType)){
+				String Label = map.get("Label");
+				message = MessageUtil.initText(toUserName, fromUserName,Label);
 			}
 			
+			System.out.println(message);
 			out.print(message);
 			
 		}catch(DocumentException e){
