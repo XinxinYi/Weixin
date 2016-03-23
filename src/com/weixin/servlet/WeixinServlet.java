@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.DocumentException;
 
+import com.weixin.data.SqlConn;
 import com.weixin.data.UserData;
 import com.weixin.user.User;
 import com.weixin.util.CheckUtil;
@@ -61,7 +62,7 @@ public class WeixinServlet extends HttpServlet {
 					String key = map.get("EventKey");
 					if(key.equals("21_qiandao")){
 						message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		 
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");		 
 						User user = new User();
 						user = WeixinUtil.getUser(fromUserName);						
 						user.setLastSignTime(sdf.format(new Date()));						
@@ -70,6 +71,10 @@ public class WeixinServlet extends HttpServlet {
 						user2 = WeixinUtil.getUser(fromUserName);						
 						user2.setLastSignTime(sdf.format(new Date()));						
 						UserData.addUser(user2);
+						
+						SqlConn sc = new SqlConn();
+						sc.insertUser(user);
+						
 					}					
 				}else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){
 					String url = map.get("EventKey");
