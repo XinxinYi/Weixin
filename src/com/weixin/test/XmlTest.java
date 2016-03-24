@@ -25,23 +25,26 @@ public class XmlTest {
 			//通过DocumentBuilder对象的parse方法加载xml文件到当前项目下
 			Document document = db.parse("xmlToken.xml");
 			//获取AccessToken和expiresIn
-			String accessToken = document.getElementsByTagName("AccessToken").item(0).getTextContent();
-			String expiresIn = document.getElementsByTagName("AccessExpires").item(0).getTextContent();
+			//String accessToken = document.getElementsByTagName("AccessToken").item(0).getTextContent();
+			//String expiresIn = document.getElementsByTagName("AccessExpires").item(0).getTextContent();
 			
 			//时间格式化
-			SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+			SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd"); 
 			//将取出的时间戳转换为DATE对象
-			Date historyTime = time.parse(expiresIn);			
+			Date historyTime = time.parse("2016-03-23 12:09:00");
+			
+			Date nowTime = time.parse("2016-03-25 19:00:00");;
+			//time.format(nowTime);
+			long taget = (historyTime.getTime() - nowTime.getTime()) / (1000 * 60 * 60 * 24) ;
+			System.out.println(taget);
 			//日期计算方法
 			GregorianCalendar gc=new GregorianCalendar(); 						
 			gc.setTime(historyTime);
 			//有效时间为7200秒
-			gc.add(13, 7200);			
-			if(gc.getTime().before(new Date())){
-				
-			}else{
-				
-			}			
+			gc.add(7, 1);			
+			
+			//int taget = time.format(gc.getTime()) - time.parse("2016-10-11").getTime();
+						
 			
 		}catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block

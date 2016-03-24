@@ -51,31 +51,55 @@ public class WeixinServlet extends HttpServlet {
 			
 			String message = null;
 			if(MessageUtil.MESSAGE_TEXT.equals(msgType)){				
-				message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());											
+				message = MessageUtil.initNewsMessage(toUserName, fromUserName);											
 			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
 				String eventType = map.get("Event");				
 				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){					
 					String nickName = WeixinUtil.getUser(fromUserName).getNickname();
-					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.subscribeText(nickName));					
+					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.subscribeText(nickName));						 
+					User user = new User();
+					user = WeixinUtil.getUser(fromUserName);											
+					SqlConn sc = new SqlConn();
+					sc.insertUser(user);
 					
 				}else if(MessageUtil.MESSAGE_CLICK.equals(eventType)){
 					String key = map.get("EventKey");
 					if(key.equals("21_qiandao")){
-						message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");		 
+						//message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+						User user = new User();
+						SqlConn sc = new SqlConn();
+						user = sc.selectUser(fromUserName);
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						
+						if(user.isTodaySign()){
+							//今天已签到
+							message = MessageUtil.initText(toUserName, fromUserName, "您今日已签到！");	
+						}else {
+							user.setTodaySign(true);
+							user.setLastSignTime(sdf.format(new Date()));
+							if(WeixinUtil.todaySign(user.getLastSignTime(),sdf.format(new Date()))){
+								//连续签到
+								user.setSignCount(user.getSignCount()+1);								
+								message = MessageUtil.initText(toUserName, fromUserName, "连续签到"+user.getSignCount()+"天");								
+							}else{
+								//没有连续签到
+								user.setSignCount(1);							
+								message = MessageUtil.initText(toUserName, fromUserName, "您昨天没有签到，今日连续签到1天！");
+							}											
+						sc.updateUser(user);
+						}							
+						
+						
+					}else if(key.equals("31_saoma")){
+						message = MessageUtil.initText(toUserName, fromUserName, "扫码成功");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		 
 						User user = new User();
 						user = WeixinUtil.getUser(fromUserName);						
-						user.setLastSignTime(sdf.format(new Date()));						
-						UserData.addUser(user);
-						User user2 = new User();
-						user2 = WeixinUtil.getUser(fromUserName);						
-						user2.setLastSignTime(sdf.format(new Date()));						
-						UserData.addUser(user2);
-						
+						user.setLastSignTime(sdf.format(new Date()));																		
 						SqlConn sc = new SqlConn();
-						sc.insertUser(user);
+						sc.updateUser(user);
 						
-					}					
+					}	
 				}else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){
 					String url = map.get("EventKey");
 					message = MessageUtil.initText(toUserName, fromUserName, url);
@@ -88,7 +112,7 @@ public class WeixinServlet extends HttpServlet {
 				message = MessageUtil.initText(toUserName, fromUserName,Label);
 			}
 			
-			System.out.println(message);
+			//System.out.println(message);
 			out.print(message);
 			
 		}catch(DocumentException e){

@@ -331,4 +331,30 @@ public class WeixinUtil {
 		}
 		return ui;	
 	}
+	
+	public static boolean todaySign(String lastSignTime, String newSignTime){
+		//时间格式化
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd"); 
+		try {
+			Date newTime = date.parse(newSignTime);
+			Date oldTime = date.parse(lastSignTime);
+			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);
+			
+			if(tmp > 1){
+				//当前时间与上次签到时间的日期，相差大于1天，则没有连续签到
+				return false;
+			}else{
+				//昨天已签到
+				return true;
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;		
+	}
+	
+	
+	
 }

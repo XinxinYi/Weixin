@@ -17,6 +17,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.thoughtworks.xstream.XStream;
+import com.weixin.data.SqlConn;
 import com.weixin.po.Article;
 import com.weixin.po.Image;
 import com.weixin.po.ImageMessage;
@@ -24,6 +25,7 @@ import com.weixin.po.Music;
 import com.weixin.po.MusicMessage;
 import com.weixin.po.NewsMessage;
 import com.weixin.po.TextMessage;
+import com.weixin.user.User;
 
 public class MessageUtil {
 	public static final String MESSAGE_TEXT = "text";
@@ -31,6 +33,7 @@ public class MessageUtil {
 	public static final String MESSAGE_VOICE = "voice";
 	public static final String MESSAGE_VIDEO = "video";
 	public static final String MESSAGE_MUSIC = "music";
+	public static final String MESSAGE_NEWS = "news";	
 	public static final String MESSAGE_LINK = "link";
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_SHORTVIDEW = "shortvideo";
@@ -40,6 +43,8 @@ public class MessageUtil {
 	public static final String MESSAGE_CLICK = "CLICK";
 	public static final String MESSAGE_VIEW = "VIEW";
 	public static final String MESSAGE_SCAN = "scancode_push";
+	
+	private static final String SIGN_URL = "http://tongyuan.tunnel.qydev.com/Weixin/SignCount.jsp";
 	/*
 	 * xml转为map集合
 	 * @param request
@@ -147,28 +152,22 @@ public class MessageUtil {
 		String message = null;
 		List<Article> articleList = new ArrayList<Article>();
 		NewsMessage newsMessage = new NewsMessage();
-		
+
 		Article article = new Article();
-		article.setTitle("通源介绍");
-		article.setDescription("2BEX系列水环真空泵，工作介质为常温清水，采用单级单作用的结构形式，具有结构简单，运行可靠，高效节能的优点，并能适用排水量大、载荷冲击波动等恶劣工况。");
-		article.setPicUrl("http://mmbiz.qpic.cn/mmbiz/Iic7h4DqJZyXVyszt4tiaEuBLNLrIG9PRjXABANCFXjM0hfhQhxT4mc9F0e9edn1jYia8meey80rfA1cp0IibRZEvQ/640?wx_fmt=jpeg&wxfrom=5");
-		article.setUrl("www.baidu.com");
+		article.setTitle("每日签到！");
+		article.setDescription("↓↓↓戳我，就现在");
+		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");
+		article.setUrl(SIGN_URL+"?openid="+fromUserName);
 		
 		articleList.add(article);
-		
-		Article article2 = new Article();
-		article2.setTitle("第二篇通源介绍");
-		article2.setDescription("通源泵业有限公司真空泵，工作介质为常温清水，采用单级单作用的结构形式，具有结构简单，运行可靠，高效节能的优点，并能适用排水量大、载荷冲击波动等恶劣工况。");
-		article2.setPicUrl("http://mmbiz.qpic.cn/mmbiz/Iic7h4DqJZyUyGaNiaxqFxibTicG6dwOIoutYWPrb7xZicg1AFjycrTsZTAyavnlp9JPO09ibjnDtYW3LYj1AhUg27jw/640?wx_fmt=jpeg&wxfrom=5");
-		article2.setUrl("www.baidu.com");
-		articleList.add(article2);
 		
 		newsMessage.setFromUserName(toUserName);
 		newsMessage.setToUserName(fromUserName);
 		newsMessage.setArticles(articleList);
-		newsMessage.setCreateTime("2016-3-7");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		newsMessage.setCreateTime(sdf.format(new Date()));
 		newsMessage.setArticleCount(articleList.size());
-		newsMessage.setMsgType("news");
+		newsMessage.setMsgType(MESSAGE_NEWS);
 		
 		message = MessageUtil.newsMessageToXml(newsMessage);
 		return message;

@@ -17,6 +17,7 @@ public class User {
 	
 	private String lastSignTime;
 	private int signCount;
+	private int signAllCount;
 	private boolean todaySign;
 	
 	public int getSubscribe() {
@@ -114,6 +115,12 @@ public class User {
 	}
 	public void setTodaySign(boolean todaySign) {
 		this.todaySign = todaySign;
+	}
+	public int getSignAllCount() {
+		return signAllCount;
+	}
+	public void setSignAllCount(int signAllCount) {
+		this.signAllCount = signAllCount;
 	}
 
 }
