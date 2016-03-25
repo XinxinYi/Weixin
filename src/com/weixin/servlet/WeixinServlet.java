@@ -51,7 +51,7 @@ public class WeixinServlet extends HttpServlet {
 			
 			String message = null;
 			if(MessageUtil.MESSAGE_TEXT.equals(msgType)){				
-				message = MessageUtil.initNewsMessage(toUserName, fromUserName);											
+				message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.sorryText());											
 			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
 				String eventType = map.get("Event");				
 				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){					
@@ -75,18 +75,20 @@ public class WeixinServlet extends HttpServlet {
 							//今天已签到
 							message = MessageUtil.initText(toUserName, fromUserName, "您今日已签到！");	
 						}else {
-							user.setTodaySign(true);
-							user.setLastSignTime(sdf.format(new Date()));
-							if(WeixinUtil.todaySign(user.getLastSignTime(),sdf.format(new Date()))){
+							if(WeixinUtil.isYtdaySign(user.getLastSignTime(),sdf.format(new Date()))){
 								//连续签到
 								user.setSignCount(user.getSignCount()+1);								
-								message = MessageUtil.initText(toUserName, fromUserName, "连续签到"+user.getSignCount()+"天");								
+								//message = MessageUtil.initText(toUserName, fromUserName, "连续签到"+user.getSignCount()+"天");								
 							}else{
 								//没有连续签到
 								user.setSignCount(1);							
-								message = MessageUtil.initText(toUserName, fromUserName, "您昨天没有签到，今日连续签到1天！");
-							}											
-						sc.updateUser(user);
+								//message = MessageUtil.initText(toUserName, fromUserName, "您昨天没有签到，今日连续签到1天！");
+							}
+							user.setTodaySign(true);
+							user.setSignAllCount(user.getSignAllCount()+1);
+							user.setLastSignTime(sdf.format(new Date()));
+							sc.updateUser(user);
+							message = MessageUtil.signNewsMessage(toUserName, fromUserName);
 						}							
 						
 						
@@ -100,6 +102,9 @@ public class WeixinServlet extends HttpServlet {
 						sc.updateUser(user);
 						
 					}	
+				}else if(MessageUtil.MESSAGE_UNSUBSCRIBE.equals(eventType)){
+					SqlConn sc = new SqlConn();
+					sc.deleteUser(fromUserName);
 				}else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){
 					String url = map.get("EventKey");
 					message = MessageUtil.initText(toUserName, fromUserName, url);

@@ -104,6 +104,9 @@ public class WeixinUtil {
 		}
 		return token;
 	}
+	/*
+	 * 避免多次重复从微信服务器获取accessToken，将最新的存储于xmltoken文件中
+	 */
 	public static AccessToken getExitAccessToken(){
 		AccessToken token = new AccessToken();
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -133,8 +136,7 @@ public class WeixinUtil {
 				//System.out.println("****new****");
 				token = WeixinUtil.getAccessToken();
 				String nowTimeStr = date.format(nowTime);
-				WeixinUtil.updateToken(token, nowTimeStr);
-				
+				WeixinUtil.updateToken(token, nowTimeStr);				
 			}else{
 				//System.out.println("****old****");
 				token.setToken(accessToken);
@@ -156,6 +158,9 @@ public class WeixinUtil {
 		}
 		return token;
 	}
+	/*
+	 * 将最新accessToken写入xml文件中
+	 */
 	public static void updateToken(AccessToken accessToken, String nowTimeStr){
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
@@ -185,7 +190,9 @@ public class WeixinUtil {
 			e.printStackTrace();
 		}				
 	}
-	
+	/*
+	 * 文件上传
+	 */
 	public static String upload(String filePath,String accessToken,String type) throws IOException{
 		File file = new File(filePath);
 		if(!file.exists() || !file.isFile()){
@@ -298,7 +305,9 @@ public class WeixinUtil {
 		menu.setButton(new Button[]{button11,button});
 		return menu;
 	}
-	
+	/*
+	 * 创建菜单
+	 */
 	public static int createMenu(String token,String menu) throws ParseException,IOException{
 		int result = 0;
 		String url = WeixinUtil.CREATE_MENU_URL.replace("ACCESS_TOKEN", token);
@@ -306,7 +315,6 @@ public class WeixinUtil {
 		if(jsonObject != null){
 			result = jsonObject.getInt("errcode");
 		}
-
 		return result;
 	}
 	
@@ -324,6 +332,7 @@ public class WeixinUtil {
 				ui.setProvince(jsonObject.getString("province"));
 				ui.setHeadimgurl(jsonObject.getString("headimgurl"));
 				ui.setSubscribe_time(jsonObject.getString("subscribe_time"));
+				System.out.println(ui.getSubscribe_time());
 			}
 			 	
 		}catch(Exception e){
@@ -332,14 +341,16 @@ public class WeixinUtil {
 		return ui;	
 	}
 	
-	public static boolean todaySign(String lastSignTime, String newSignTime){
+	public static boolean isYtdaySign(String lastSignTime, String newSignTime){
 		//时间格式化
 		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd"); 
 		try {
 			Date newTime = date.parse(newSignTime);
 			Date oldTime = date.parse(lastSignTime);
 			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);
-			
+			//System.out.println("newTime:" + date.format(newTime));
+			//System.out.println("oldTime:" + date.format(oldTime));
+			//System.out.println("签到时间间隔："+tmp);
 			if(tmp > 1){
 				//当前时间与上次签到时间的日期，相差大于1天，则没有连续签到
 				return false;

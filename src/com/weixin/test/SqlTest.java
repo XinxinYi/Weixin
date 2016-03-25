@@ -31,10 +31,10 @@ public class SqlTest {
 
 		    //Statement stmt = connect.prepareStatement(sql);
 		    // stmt.executeUpdate(sql); 
-		      String update = "update weixin_users set headimgurl='http://wx.qlogo.cn/mmopen/Q3auHgzwzM5AeAmduyDiaWWJplYAouPicfazQGuFl9ILnlJ3icHwdkTulL46E3KMSZnMRTBtpRJibAEHRiajDGWlAGA/0' where todaySign='true'";
+		     // String update = "update weixin_users set headimgurl='http://wx.qlogo.cn/mmopen/Q3auHgzwzM5AeAmduyDiaWWJplYAouPicfazQGuFl9ILnlJ3icHwdkTulL46E3KMSZnMRTBtpRJibAEHRiajDGWlAGA/0' where todaySign='true'";
 			 //String insert = "insert into weixin_users values('oh5ZIvxfeuQlG4Vb8PHhBA','昕昕','2','null','海淀','北京','null','rl','1458289587','null','null','null','2016-03-23-07:04:19','0','0','false')";    
 		      Statement stmt = connect.createStatement();
-		     stmt.executeUpdate(update);
+		     //stmt.executeUpdate(update);
 		       ResultSet rs = stmt.executeQuery("select * from weixin_users");
 		      //System.out.println(rs);
 		      //user 为你表的名称
@@ -44,7 +44,7 @@ public class SqlTest {
 		      
 		      
 		while (rs.next()) {
-		        System.out.println("openid:" + rs.getString("openid") + "  lastSignTime:" + rs.getString("lastSignTime") + " SignCount: "+rs.getString("signCount") + "todaySign: "+rs.getString("todaySign"));
+		        System.out.println("openid:" + rs.getString("openid") + "  lastSignTime:" + rs.getString("lastSignTime") + "  SignCount: "+rs.getString("signCount") + "  SignAllCount:" + rs.getString("signAllCount") +  "   todaySign: "+rs.getString("todaySign"));
 		        System.out.println(rs.getString("headimgurl"));
 		}
 		    }

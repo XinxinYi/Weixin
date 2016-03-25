@@ -44,11 +44,11 @@ public class SqlConn {
         }  
      }
      	  
-
+     //新增一个用户，用户关注时调用
     public void insertUser(User user){  	
     	String insert = "insert into weixin_users" + " values('"+user.getOpenid()+"','"+user.getNickname()+"','"+user.getSex()+"','"+user.getLanguage()+"','"+user.getCity()+"','"+user.getProvince()+"','"+ user.getCountry()+"','"+user.getHeadimgurl()+"','"+user.getSubscribe_time()+"','"+user.getUnionid()+"','"+user.getRemark()+"','"+user.getGroupid()+"','"+user.getLastSignTime()+"','"+user.getSignCount()+"','" + user.getSignAllCount() + "','" +user.isTodaySign()+"')";
     	
-    	//System.out.println(insert);
+    	System.out.println(insert);
     	try {	
 			this.connSQL();
 			stmt = conn.createStatement();
@@ -59,9 +59,10 @@ public class SqlConn {
 		}       	                 
     	this.deconnSQL(); 
     }  
-    
+    //更新用户信息，用户签到时调用
     public void updateUser(User user){
-    	String update = "UPDATE weixin_users set lastSignTime ='"+user.getLastSignTime()+"', signCount='"+user.getSignCount()+ "', signAllCount='" +user.getSignAllCount() + "' todaySign='"+user.isTodaySign()+"' where openid='"+user.getOpenid()+"'";    	
+    	String update = "UPDATE weixin_users set headimgurl='" +user.getHeadimgurl()+"',lastSignTime ='"+user.getLastSignTime()+"', signCount='"+user.getSignCount()+ "', signAllCount='" +user.getSignAllCount() + "', todaySign='"+user.isTodaySign()+"' where openid='"+user.getOpenid()+"'";    	
+    	//System.out.println(update);
     	try {	
 			this.connSQL();
 			stmt = conn.createStatement();
@@ -113,7 +114,7 @@ public class SqlConn {
     		this.connSQL();
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(selectAll);
-			
+			//获取检索到的条目数，即今日签到总人数
 			int length = 0;
 			Statement stmt2 = conn.createStatement();
 			ResultSet rs2 = stmt2.executeQuery(selectCount);
@@ -128,8 +129,7 @@ public class SqlConn {
 					allHead[tmp] = rs.getString("headimgurl");
 					tmp++;					
 				}	
-				
-			
+							
 			this.deconnSQL();
 	    	return allHead;
     	}		
@@ -140,8 +140,8 @@ public class SqlConn {
     	return null;
     	}
      
-    public void deleteUser(User user){
-    	String delete = "delete from weixin_users where openid= '" + user.getOpenid() +"'";      	
+    public void deleteUser(String openId){
+    	String delete = "delete from weixin_users where openid= '" + openId +"'";      	
     	this.connSQL();		
 		try {
 			stmt = conn.createStatement();

@@ -73,8 +73,6 @@ public class MessageUtil {
 	
 	/*
 	 * 将文本对象转换为xml
-	 * 
-	 * 
 	 */
 	public static String textMessageToXml(TextMessage textMessage){
 		XStream xstream = new XStream();
@@ -83,7 +81,6 @@ public class MessageUtil {
 		return xstream.toXML(textMessage);
 	}
 	/*
-	 * 
 	 * 图文消息转换为XML	
 	 */
 	public static String newsMessageToXml(NewsMessage newsMessage){
@@ -92,8 +89,7 @@ public class MessageUtil {
 		xstream.alias("item", new Article().getClass());
 		return xstream.toXML(newsMessage);
 	}
-	/*
-	 * 
+	/* 
 	 * 图片消息转换为XML	
 	 */
 	public static String imageMessageToXml(ImageMessage imageMessage){
@@ -102,8 +98,7 @@ public class MessageUtil {
 		xstream.alias("image", new Image().getClass());
 		return xstream.toXML(imageMessage);
 	}
-	/*
-	 * 
+	/* 
 	 * 音乐消息转换为XML	
 	 */
 	public static String musicMessageToXml(MusicMessage musicMessage){
@@ -114,8 +109,6 @@ public class MessageUtil {
 	}
 	/*
 	 * 拼接文本消息
-	 * 
-	 * 
 	 */
 	public static String initText(String toUserName,String fromUserName,String content){
 		TextMessage text = new TextMessage();
@@ -128,33 +121,37 @@ public class MessageUtil {
 		return textMessageToXml(text);
 		
 	}
+	/*
+	 * 关注时回复的文本消息
+	 */
 	public static String subscribeText(String nickName){
 		StringBuffer sb = new StringBuffer();
 		sb.append(nickName);
 		sb.append("，非常感谢您的关注！\n");
-		sb.append("本公众号本着“为人民服务，做好事不留名”的精神，提供各类精品资源！\n");
+		sb.append("本公众号本着“为人民服务，做好事不留名”的精神，提供各类精品资源！");
 		return sb.toString();
 	}
 
 	/*
 	 * 主菜单 
-	 * 
 	 */
-	public static String menuText(){
+	public static String sorryText(){
 		StringBuffer sb = new StringBuffer();
 		sb.append("抱歉，五杀电影院正在建设中\n");
 		sb.append("可点击进入影院观看电影！");
 		return sb.toString();
 	}
 
-
-	public static String initNewsMessage(String toUserName,String fromUserName){
+	/*
+	 * 图文消息
+	 */
+	public static String signNewsMessage(String toUserName,String fromUserName){
 		String message = null;
 		List<Article> articleList = new ArrayList<Article>();
 		NewsMessage newsMessage = new NewsMessage();
 
 		Article article = new Article();
-		article.setTitle("每日签到！");
+		article.setTitle("打卡成功！");
 		article.setDescription("↓↓↓戳我，就现在");
 		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");
 		article.setUrl(SIGN_URL+"?openid="+fromUserName);
@@ -172,7 +169,9 @@ public class MessageUtil {
 		message = MessageUtil.newsMessageToXml(newsMessage);
 		return message;
 	}
-	
+	/*
+	 * 图片消息
+	 */
 	public static String initImageMessage(String toUserName,String fromUserName){
 		String message = null;
 		Image image = new Image();
@@ -188,6 +187,9 @@ public class MessageUtil {
 		return message;
 		
 	}
+	/*
+	 * 音频、音乐消息
+	 */
 	public static String initMusicMessage(String toUserName,String fromUserName){
 		String message = null;
 		Music music = new Music();
