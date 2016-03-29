@@ -83,8 +83,7 @@ td {
 				<%out.println(pointsOrder[i][3]);%>
 			</td>
 			</tr>		
-			<%
-						
+			<%						
 			}
 			%>
 	
