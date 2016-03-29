@@ -66,8 +66,7 @@ td {
 		for(int i=0;i<pointsOrder.length;i++){
 			if(i>9) break;
 			//out.println(pointsOrder[i][0]);
-			%>
-			
+			%>			
 			<tr >
 			<td>
 				<p>&nbsp&nbsp&nbsp<%out.println(i+1); %></p>
