@@ -20,6 +20,8 @@ public class User {
 	private int signAllCount;
 	private boolean todaySign;
 	
+	private int points;
+	
 	public int getSubscribe() {
 		return subscribe;
 	}
@@ -121,6 +123,12 @@ public class User {
 	}
 	public void setSignAllCount(int signAllCount) {
 		this.signAllCount = signAllCount;
+	}
+	public int getPoints() {
+		return points;
+	}
+	public void setPoints(int points) {
+		this.points = points;
 	}
 
 }

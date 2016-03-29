@@ -366,6 +366,51 @@ public class WeixinUtil {
 		return false;		
 	}
 	
+	public static boolean isTodaySign(String lastSignTime, String newSignTime){
+		//时间格式化
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd"); 
+		try {
+			Date newTime = date.parse(newSignTime);
+			Date oldTime = date.parse(lastSignTime);
+			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);
+			//System.out.println("newTime:" + date.format(newTime));
+			//System.out.println("oldTime:" + date.format(oldTime));
+			//System.out.println("签到时间间隔："+tmp);
+			if(tmp == 0){
+				//当前时间与上次签到时间的日期，相差大于1天，则没有连续签到
+				return true;
+			}else{
+				//昨天已签到
+				return false;
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;		
+	}
 	
+	public static int getPoints(int signCount){
+		int points = 0;
+		switch(signCount){
+		case 1:
+			points = 1;
+			break;
+		case 2:
+			points = 2;
+			break;
+		case 3:
+			points = 3;
+			break;
+		case 4:
+			points = 5;
+			break;
+		default:
+			points = 6;
+			break;
+		}
+		return points;
+	}
 	
 }

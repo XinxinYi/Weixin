@@ -14,11 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.dom4j.DocumentException;
 
 import com.weixin.data.SqlConn;
-import com.weixin.data.UserData;
 import com.weixin.user.User;
 import com.weixin.util.CheckUtil;
 import com.weixin.util.MessageUtil;
 import com.weixin.util.WeixinUtil;
+
+import java.util.concurrent.Executors;  
+import java.util.concurrent.ScheduledExecutorService;  
+import java.util.concurrent.TimeUnit; 
 
 public class WeixinServlet extends HttpServlet {
 	@Override
@@ -31,8 +34,10 @@ public class WeixinServlet extends HttpServlet {
 		
 		PrintWriter out = resp.getWriter();
 		if(CheckUtil.checkSignature(signature, timestamp, nonce)){
-			out.print(echostr);
+			out.print(echostr);				
 		}
+		
+		
 	}
 	protected void doPost(HttpServletRequest req,HttpServletResponse resp)
 		throws ServletException,IOException{
@@ -69,7 +74,7 @@ public class WeixinServlet extends HttpServlet {
 						User user = new User();
 						SqlConn sc = new SqlConn();
 						user = sc.selectUser(fromUserName);
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						
 						if(user.isTodaySign()){
 							//今天已签到
@@ -87,19 +92,15 @@ public class WeixinServlet extends HttpServlet {
 							user.setTodaySign(true);
 							user.setSignAllCount(user.getSignAllCount()+1);
 							user.setLastSignTime(sdf.format(new Date()));
+							user.setPoints(user.getPoints() + WeixinUtil.getPoints(user.getSignCount()));
+							System.out.println("本次points=" + WeixinUtil.getPoints(user.getSignCount()));
 							sc.updateUser(user);
 							message = MessageUtil.signNewsMessage(toUserName, fromUserName);
 						}							
 						
 						
 					}else if(key.equals("31_saoma")){
-						message = MessageUtil.initText(toUserName, fromUserName, "扫码成功");
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");		 
-						User user = new User();
-						user = WeixinUtil.getUser(fromUserName);						
-						user.setLastSignTime(sdf.format(new Date()));																		
-						SqlConn sc = new SqlConn();
-						sc.updateUser(user);
+						message = MessageUtil.initText(toUserName, fromUserName, "扫码成功");						
 						
 					}	
 				}else if(MessageUtil.MESSAGE_UNSUBSCRIBE.equals(eventType)){

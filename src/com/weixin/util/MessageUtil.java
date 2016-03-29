@@ -17,7 +17,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.thoughtworks.xstream.XStream;
-import com.weixin.data.SqlConn;
 import com.weixin.po.Article;
 import com.weixin.po.Image;
 import com.weixin.po.ImageMessage;
@@ -25,7 +24,6 @@ import com.weixin.po.Music;
 import com.weixin.po.MusicMessage;
 import com.weixin.po.NewsMessage;
 import com.weixin.po.TextMessage;
-import com.weixin.user.User;
 
 public class MessageUtil {
 	public static final String MESSAGE_TEXT = "text";
@@ -154,6 +152,8 @@ public class MessageUtil {
 		article.setTitle("打卡成功！");
 		article.setDescription("↓↓↓戳我，就现在");
 		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");
+		
+		
 		article.setUrl(SIGN_URL+"?openid="+fromUserName);
 		
 		articleList.add(article);

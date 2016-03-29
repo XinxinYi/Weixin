@@ -46,7 +46,7 @@ public class SqlConn {
      	  
      //新增一个用户，用户关注时调用
     public void insertUser(User user){  	
-    	String insert = "insert into weixin_users" + " values('"+user.getOpenid()+"','"+user.getNickname()+"','"+user.getSex()+"','"+user.getLanguage()+"','"+user.getCity()+"','"+user.getProvince()+"','"+ user.getCountry()+"','"+user.getHeadimgurl()+"','"+user.getSubscribe_time()+"','"+user.getUnionid()+"','"+user.getRemark()+"','"+user.getGroupid()+"','"+user.getLastSignTime()+"','"+user.getSignCount()+"','" + user.getSignAllCount() + "','" +user.isTodaySign()+"')";
+    	String insert = "insert into weixin_users" + " values('"+user.getOpenid()+"','"+user.getNickname()+"','"+user.getSex()+"','"+user.getLanguage()+"','"+user.getCity()+"','"+user.getProvince()+"','"+ user.getCountry()+"','"+user.getHeadimgurl()+"','"+user.getSubscribe_time()+"','"+user.getUnionid()+"','"+user.getRemark()+"','"+user.getGroupid()+"','"+user.getLastSignTime()+"','"+user.getSignCount()+"','" + user.getSignAllCount() + "','" +user.isTodaySign()+ "','" +user.getPoints() +"')";
     	
     	System.out.println(insert);
     	try {	
@@ -61,8 +61,9 @@ public class SqlConn {
     }  
     //更新用户信息，用户签到时调用
     public void updateUser(User user){
-    	String update = "UPDATE weixin_users set headimgurl='" +user.getHeadimgurl()+"',lastSignTime ='"+user.getLastSignTime()+"', signCount='"+user.getSignCount()+ "', signAllCount='" +user.getSignAllCount() + "', todaySign='"+user.isTodaySign()+"' where openid='"+user.getOpenid()+"'";    	
-    	//System.out.println(update);
+    	
+    	String update = "UPDATE weixin_users set headimgurl='" +user.getHeadimgurl()+"',lastSignTime ='"+user.getLastSignTime()+"', signCount='"+user.getSignCount()+ "', signAllCount='" +user.getSignAllCount() + "', todaySign='"+user.isTodaySign()+ "', points='"+user.getPoints() +"' where openid='"+user.getOpenid()+"'";    	
+    	System.out.println(update);
     	try {	
 			this.connSQL();
 			stmt = conn.createStatement();
@@ -97,6 +98,7 @@ public class SqlConn {
 				user.setSignCount(rs.getInt("signCount"));
 				user.setSignAllCount(rs.getInt("signAllCount"));
 				user.setTodaySign(rs.getBoolean("todaySign"));
+				user.setPoints(rs.getInt("points"));
 			}
 			
 		} catch (SQLException e) {
@@ -139,7 +141,44 @@ public class SqlConn {
 			}  
     	return null;
     	}
-     
+    
+    
+    public String[][] getPointsOrder(){
+    	String selectAll = "select * from weixin_users order by points desc";
+    	String selectCount = "select count(*)  as userCounts from (select * from weixin_users order by points desc) as userCounts";
+    	try {	
+    		this.connSQL();
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(selectAll);
+			//获取检索到的条目数，即今日签到总人数
+			int length = 0;
+			Statement stmt2 = conn.createStatement();
+			ResultSet rs2 = stmt2.executeQuery(selectCount);
+			while(rs2.next()){
+				length = rs2.getInt("userCounts");
+			}
+			
+			//System.out.println(length);
+			String[][] allUsers = new String[length][4];
+			int tmp = 0;
+				while(rs.next()){
+					allUsers[tmp][0] = rs.getString("openid");
+					allUsers[tmp][1] = rs.getString("nickname");
+					allUsers[tmp][2] = rs.getString("headimgurl");
+					allUsers[tmp][3] = rs.getString("points");
+					tmp++;					
+				}	
+							
+			this.deconnSQL();
+	    	return allUsers;
+	    	}		
+			catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();			
+				}  
+	    return null;
+	    	
+    }
     public void deleteUser(String openId){
     	String delete = "delete from weixin_users where openid= '" + openId +"'";      	
     	this.connSQL();		
@@ -153,6 +192,17 @@ public class SqlConn {
     	this.deconnSQL();
     }
     
-    
+    public void updateTodaySign(){
+    	String update = "update weixin_users set todaySign = 'false'";
+    	this.connSQL();		
+		try {
+			stmt = conn.createStatement();
+			stmt.executeUpdate(update);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+    	this.deconnSQL();
+    }
      
 }

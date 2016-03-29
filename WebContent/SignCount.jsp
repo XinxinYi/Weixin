@@ -2,6 +2,7 @@
     pageEncoding="utf-8"%>
 <%@ page import="com.weixin.data.SqlConn"
     	import="com.weixin.user.User"
+    	import="com.weixin.util.WeixinUtil"
     %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -10,13 +11,14 @@
 <meta id="viewport" name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=2.0;" />
 <title>每日签到</title>
 <style type="text/css">
-body {background:#fffff0; max-width:400px;margin:0 auto;}
+body {background:#fffff0; max-width:400px;margin:0 auto;font-family:"微软雅黑";font-size:20px; color:#007799}
 p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:italic; white-space:nowrap;}
+.othP{font-family:"微软雅黑";font-size:20px; color:#007799;float:left;}
 .tab {background:#ffffff; border-radius:0;  
 		 margin:0 10px; padding:15px;
 		border:1px; border-style: solid;border-color:rgb(242,242,242);
 		}
-.tab1{text-align:center;margin: 0px auto;height:230px;}
+.tab1{text-align:center;margin: 0px auto;height:280px;}
 .signImg{width:180px; height:180px; margin-bottom:8px; }
 .tab2{margin-top:10px;height:200px;}
 .headImg {width:55px; height:55px;}
@@ -24,10 +26,32 @@ p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:it
 .headAll{float:left; margin:5px 5px;}
 .wenzi{float:left;margin:0;margin-right:5px;}
 .lastwenzi{white-space:nowrap;}
-.tab3{margin-top:10px;height:60px;}
+
+
+.tab4{margin-top:10px;height:30px;}
 
 </style>
 </head>
+ 
+<script type="text/javascript">
+    // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+    var useragent = navigator.userAgent;
+    if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+        // 这里警告框会阻塞当前页面继续加载
+        alert('已禁止本次访问：您必须使用微信内置浏览器访问本页面！');
+        // 以下代码是用javascript强行关闭当前页面
+        var opened = window.open('about:blank', '_self');
+        opened.opener = null;
+        opened.close();
+    }
+</script>
+<script type="text/javascript">
+function sclick(){
+    //alert("hi");
+    window.location.href="PointsOrder.jsp";  
+}
+
+</script>
 <body>
 	<%
 		String path = request.getContextPath();
@@ -49,9 +73,19 @@ p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:it
 			<img class="wenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/yijianchi.png" >
 			<p class="wenzi"><% out.println(user.getSignCount());%></p>
 			<img class="wenzi lastwenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/tian.png" >
+			
+			<!--  
+			<img class="wenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/bencijifen.png" >
+			<p class="wenzi"> <% out.println(WeixinUtil.getPoints(user.getSignCount())); %></p>
+			</br>
+			<img class="wenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/zongjifen.png" >
+			<p class="wenzi"> <% out.println(user.getPoints()); %></p>
+			-->
+			<p>+<% out.println(WeixinUtil.getPoints(user.getSignCount())); %></p>
+			
 		</div>
 	</div>
-	<div class="tab tab2">
+	<div class="tab tab2" onclick = "javascript:sclick();">
 		<table>
 			<tr><td>
 			<div >
@@ -61,17 +95,26 @@ p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:it
 			</div>
 			</td></tr>
 			<tr><td>					
-			<%for(int i=0;i<allSignCount;i++){ %>
+			<%
+				int i =0;
+				for(i=0;i<allSignCount;i++){ %>
 					<div class="headImg headImgDiv headAll">		
 						<img class="headImg" alt="" src="<%=allSignHead[i]%>" >											
 					</div>
 			<%  
 				if(i>7) break;
-				}%><h1 class="wenzi">...</h1>
+				}%>
+				<h1 class="wenzi"><%if(i>7) out.println("...");%></h1>
+				
 			</td></tr>
 		</table>					
 	</div>
 	<div class="tab tab3">
+	
+	
+	</div>
+	
+	<div class="tab tab4">
 		<img class="wenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/dakatongji.png" >
 		<p class="wenzi"><% out.println(user.getSignAllCount());%></p>
 		<img class="wenzi" alt="" src="http://tongyuan.tunnel.qydev.com/Weixin/files/tian.png" >	
