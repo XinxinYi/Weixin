@@ -11,14 +11,14 @@
 <meta id="viewport" name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=2.0;" />
 <title>积分排行榜</title>
 <style type="text/css">
-body {background:#fffff0; max-width:400px;margin:15px;font-family:"微软雅黑";font-size:20px; color:#007799}
+body {background:#fffff0; max-width:400px;margin:0 auto;font-family:"微软雅黑";font-size:20px; color:#007799}
 p {margin:0; white-space:nowrap;}
-table{border:0;border-spacing:0px;}
+table{border:0;border-spacing:0px;margin:0 15px;}
 .row {  margin:10px 10px; padding:5px;
 		 width:100%; border-color: #F0FBEB;
 		background-color: #F0FBEB；}
 
-.headFirstDiv{margin-left:40%;border-radius:50%;overflow:hidden;}
+.headFirstDiv{margin-left:40%;margin-top:15px;border-radius:50%;overflow:hidden;}
 .headFirst{width:70px;height:70px;}
 
 .headImg {width:55px; height:55px;}

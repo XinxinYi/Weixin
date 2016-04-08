@@ -113,7 +113,7 @@ public class MessageUtil {
 		text.setFromUserName(toUserName);
 		text.setToUserName(fromUserName);
 		text.setMsgType(MessageUtil.MESSAGE_TEXT);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");		 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		 
 		text.setCreateTime(sdf.format(new Date()));
 		text.setContent(content);
 		return textMessageToXml(text);
@@ -151,17 +151,29 @@ public class MessageUtil {
 		Article article = new Article();
 		article.setTitle("打卡成功！");
 		article.setDescription("↓↓↓戳我，就现在");
-		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");
-		
-		
+		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
 		article.setUrl(SIGN_URL+"?openid="+fromUserName);
 		
+		Article article2 = new Article();
+		article2.setTitle("每日更新的内容");
+		article2.setDescription("最好看最精彩的电影！");
+		article2.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
+		article2.setUrl("http://t.cn/RUp5drF");
+		
+		Article article3 = new Article();
+		article3.setTitle("每日更新的内容");
+		article3.setDescription("最好看最精彩的电影！");
+		article3.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
+		article3.setUrl("http://t.cn/RUp5drF");
+		
 		articleList.add(article);
+		//articleList.add(article2);
+		//articleList.add(article3);
 		
 		newsMessage.setFromUserName(toUserName);
 		newsMessage.setToUserName(fromUserName);
 		newsMessage.setArticles(articleList);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		newsMessage.setCreateTime(sdf.format(new Date()));
 		newsMessage.setArticleCount(articleList.size());
 		newsMessage.setMsgType(MESSAGE_NEWS);

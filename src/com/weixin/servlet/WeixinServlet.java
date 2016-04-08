@@ -100,8 +100,8 @@ public class WeixinServlet extends HttpServlet {
 						
 						
 					}else if(key.equals("31_saoma")){
-						message = MessageUtil.initText(toUserName, fromUserName, "扫码成功");						
-						
+						//message = MessageUtil.initText(toUserName, fromUserName, "扫码成功");						
+						message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.sorryText());
 					}	
 				}else if(MessageUtil.MESSAGE_UNSUBSCRIBE.equals(eventType)){
 					SqlConn sc = new SqlConn();

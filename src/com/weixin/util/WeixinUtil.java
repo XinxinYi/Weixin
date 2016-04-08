@@ -242,7 +242,6 @@ public class WeixinUtil {
 		byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("utf-8");//定义最后数据分隔线
 
 		out.write(foot);
-
 		out.flush();
 		out.close();
 
@@ -293,16 +292,16 @@ public class WeixinUtil {
 		button21.setType("click");
 		button21.setKey("21_qiandao");
 		
-		ClickButton button22 = new ClickButton();
-		button22.setName("扫码");
-		button22.setType("click");
-		button22.setKey("31_saoma");
+		//ClickButton button22 = new ClickButton();
+		//button22.setName("扫码");
+		//button22.setType("click");
+		//button22.setKey("31_saoma");
 		
-		Button button = new Button();
-		button.setName("菜单");
-		button.setSub_button(new Button[]{button21,button22});
+		//Button button = new Button();
+		//button.setName("菜单");
+		//button.setSub_button(new Button[]{button21,button22});
 		
-		menu.setButton(new Button[]{button11,button});
+		menu.setButton(new Button[]{button11,button21});
 		return menu;
 	}
 	/*

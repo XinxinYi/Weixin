@@ -7,26 +7,38 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.weixin.user.User;
+import com.weixin.util.ConfigUtil;
 
-public class SqlConn {
-	private static final String CONN_URL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8";
-	private static final String USERNAME = "root";
-	private static final String PASSWORD = "1234";
+public class SqlConn {		
+	
+	//private static final String CONN_URL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8";
+	//private static final String USERNAME = "root";
+	//private static final String PASSWORD = "1234";		
 	
 	private Connection conn = null;  
     private Statement stmt = null; 
     
 	public void connSQL(){
-		try {
-		      Class.forName("com.mysql.jdbc.Driver");     //加载MYSQL JDBC驱动程序   
-		      conn = DriverManager.getConnection(CONN_URL,USERNAME,PASSWORD);
-		      //连接URL为   jdbc:mysql//服务器地址/数据库名  ，后面的2个参数分别是登陆用户名和密码
+		
+		
+		try {						
+			//String userDir = System.getProperty("user.dir");
+			//System.out.println(userDir);
+			
+			ConfigUtil cu = new ConfigUtil("../../workspace/Weixin/WebContent/WEB-INF/config.properties");
+			String CONN_URL = cu.getValue("dbUrl");
+			String USERNAME = cu.getValue("dbUserName");
+			String PASSWORD = cu.getValue("dbPassword");			
+			
+		    Class.forName("com.mysql.jdbc.Driver");     //加载MYSQL JDBC驱动程序   
+		    conn = DriverManager.getConnection(CONN_URL,USERNAME,PASSWORD);
+		    //连接URL为   jdbc:mysql//服务器地址/数据库名  ，后面的2个参数分别是登陆用户名和密码
 		      
-		      //System.out.println("Success connect Mysql server!");
-		      stmt = conn.createStatement();
-		      ResultSet rs = stmt.executeQuery("select * from user");
+		    //System.out.println("Success connect Mysql server!");
+		    stmt = conn.createStatement();
+		    ResultSet rs = stmt.executeQuery("select * from weixin_users");
 		     
-		      //user 为你表的名称
+		    //user 为你表的名称
 		    }catch (Exception e) {
 		      System.out.print("get data error!");
 		      e.printStackTrace();
@@ -144,7 +156,7 @@ public class SqlConn {
     
     
     public String[][] getPointsOrder(){
-    	String selectAll = "select * from weixin_users order by points desc";
+    	String selectAll = "select * from weixin_users order by points desc,lastSignTime desc";
     	String selectCount = "select count(*)  as userCounts from (select * from weixin_users order by points desc) as userCounts";
     	try {	
     		this.connSQL();
