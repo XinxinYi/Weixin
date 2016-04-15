@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
+/*
+ * ¶ÁÈ¡ÅäÖÃÎÄ¼ş¼Ğ
+ */
 public class ConfigUtil {
 	private Properties propertie;
     private FileInputStream inputFile;

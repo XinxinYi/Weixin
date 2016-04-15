@@ -36,6 +36,7 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.weixin.data.CreatTable;
 import com.weixin.menu.Button;
 import com.weixin.menu.ClickButton;
 import com.weixin.menu.Menu;
@@ -47,13 +48,15 @@ import net.sf.json.JSONObject;
 
 
 public class WeixinUtil {
+	//appid,appsecret根据微信号更改
 	private static final String APPID = "wx89bbf4a5b2fb537a";
 	private static final String APPSECRET = "b2c48b908458ad9a237f60e098749bcd";
 	private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	private static final String UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
 	private static final String CREATE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 	private static final String GET_USER_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-	private static final String XML_TOKEN_URL = "../../workspace/Weixin/xmlToken.xml";
+	//private static final String XML_TOKEN_URL = "../../workspace/Weixin/xmlToken.xml";
+	
 	
 	public static JSONObject doGetStr(String url) throws ClientProtocolException, IOException{
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -113,6 +116,9 @@ public class WeixinUtil {
 		//获取当前路径
 		//String userDir = System.getProperty("user.dir");
 		//System.out.println(userDir);
+		ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
+		String XML_TOKEN_URL = cu.getValue("tokenXmlUrl");
+		
 		try {
 			//创建一个DocumentBuilder的对象
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -163,6 +169,8 @@ public class WeixinUtil {
 	 */
 	public static void updateToken(AccessToken accessToken, String nowTimeStr){
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
+		String XML_TOKEN_URL = cu.getValue("tokenXmlUrl");
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document document = db.parse(XML_TOKEN_URL);
@@ -339,17 +347,16 @@ public class WeixinUtil {
 		}
 		return ui;	
 	}
-	
+	/*
+	 * 判断昨天是否签到
+	 */
 	public static boolean isYtdaySign(String lastSignTime, String newSignTime){
 		//时间格式化
 		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd"); 
 		try {
 			Date newTime = date.parse(newSignTime);
 			Date oldTime = date.parse(lastSignTime);
-			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);
-			//System.out.println("newTime:" + date.format(newTime));
-			//System.out.println("oldTime:" + date.format(oldTime));
-			//System.out.println("签到时间间隔："+tmp);
+			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);;
 			if(tmp > 1){
 				//当前时间与上次签到时间的日期，相差大于1天，则没有连续签到
 				return false;
@@ -364,7 +371,9 @@ public class WeixinUtil {
 		}
 		return false;		
 	}
-	
+	/*
+	 * 判断今天是否签到
+	 */
 	public static boolean isTodaySign(String lastSignTime, String newSignTime){
 		//时间格式化
 		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd"); 
@@ -372,9 +381,7 @@ public class WeixinUtil {
 			Date newTime = date.parse(newSignTime);
 			Date oldTime = date.parse(lastSignTime);
 			long tmp = (newTime.getTime() - oldTime.getTime()) / (1000 * 60 * 60 * 24);
-			//System.out.println("newTime:" + date.format(newTime));
-			//System.out.println("oldTime:" + date.format(oldTime));
-			//System.out.println("签到时间间隔："+tmp);
+
 			if(tmp == 0){
 				//当前时间与上次签到时间的日期，相差大于1天，则没有连续签到
 				return true;
@@ -389,7 +396,9 @@ public class WeixinUtil {
 		}
 		return false;		
 	}
-	
+	/*
+	 * 签到积分规则，根据连续签到几天，则相应增加几个积分
+	 */
 	public static int getPoints(int signCount){
 		int points = 0;
 		switch(signCount){
@@ -412,4 +421,5 @@ public class WeixinUtil {
 		return points;
 	}
 	
+
 }

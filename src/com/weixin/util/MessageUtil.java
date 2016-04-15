@@ -17,6 +17,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.thoughtworks.xstream.XStream;
+import com.weixin.data.CreatTable;
 import com.weixin.po.Article;
 import com.weixin.po.Image;
 import com.weixin.po.ImageMessage;
@@ -24,6 +25,7 @@ import com.weixin.po.Music;
 import com.weixin.po.MusicMessage;
 import com.weixin.po.NewsMessage;
 import com.weixin.po.TextMessage;
+
 
 public class MessageUtil {
 	public static final String MESSAGE_TEXT = "text";
@@ -42,7 +44,7 @@ public class MessageUtil {
 	public static final String MESSAGE_VIEW = "VIEW";
 	public static final String MESSAGE_SCAN = "scancode_push";
 	
-	private static final String SIGN_URL = "http://tongyuan.tunnel.qydev.com/Weixin/SignCount.jsp";
+	//private static final String SIGN_URL = "WebContent/SignCount.jsp";
 	/*
 	 * xml转为map集合
 	 * @param request
@@ -141,34 +143,24 @@ public class MessageUtil {
 	}
 
 	/*
-	 * 图文消息
+	 * 签到时返回的图文消息
 	 */
 	public static String signNewsMessage(String toUserName,String fromUserName){
 		String message = null;
 		List<Article> articleList = new ArrayList<Article>();
 		NewsMessage newsMessage = new NewsMessage();
 
+		ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
+		String signUrl = cu.getValue("signUrl");
+		String signImg = cu.getValue("signImg");
+		
 		Article article = new Article();
 		article.setTitle("打卡成功！");
 		article.setDescription("↓↓↓戳我，就现在");
-		article.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
-		article.setUrl(SIGN_URL+"?openid="+fromUserName);
+		article.setPicUrl(signImg);				
+		article.setUrl(signUrl+"?openid="+fromUserName);
 		
-		Article article2 = new Article();
-		article2.setTitle("每日更新的内容");
-		article2.setDescription("最好看最精彩的电影！");
-		article2.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
-		article2.setUrl("http://t.cn/RUp5drF");
-		
-		Article article3 = new Article();
-		article3.setTitle("每日更新的内容");
-		article3.setDescription("最好看最精彩的电影！");
-		article3.setPicUrl("http://imgsrc.baidu.com/forum/w%3D580/sign=5fac7d37253fb80e0cd161df06d12ffb/bf19852397dda144f3711db4b6b7d0a20df4868e.jpg");				
-		article3.setUrl("http://t.cn/RUp5drF");
-		
-		articleList.add(article);
-		//articleList.add(article2);
-		//articleList.add(article3);
+		articleList.add(article);		
 		
 		newsMessage.setFromUserName(toUserName);
 		newsMessage.setToUserName(fromUserName);
@@ -222,5 +214,5 @@ public class MessageUtil {
 		return message;
 		
 	}
-
+	
 }

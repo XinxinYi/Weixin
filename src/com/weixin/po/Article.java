@@ -5,6 +5,8 @@ public class Article {
 	private String Description;
 	private String PicUrl;
 	private String Url;
+	
+	
 	public String getTitle() {
 		return Title;
 	}

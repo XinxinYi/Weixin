@@ -1,12 +1,17 @@
 package com.weixin.util;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import com.weixin.data.CreatTable;
+/*
+ * Œ¢–≈—È÷§
+ */
 public class CheckUtil {
-	private static final String token = "weixin";
+	//private static final String token = "weixin";
 	public static boolean checkSignature(String signature,String timestamp,String nonce){
+		ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
+		String token = cu.getValue("token");
 		String[] arr = new String[]{token,timestamp,nonce};
 		//≈≈–Ú
 		Arrays.sort(arr);

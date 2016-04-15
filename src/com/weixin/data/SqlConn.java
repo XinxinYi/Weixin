@@ -8,12 +8,10 @@ import java.sql.Statement;
 
 import com.weixin.user.User;
 import com.weixin.util.ConfigUtil;
-
-public class SqlConn {		
-	
-	//private static final String CONN_URL = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf8";
-	//private static final String USERNAME = "root";
-	//private static final String PASSWORD = "1234";		
+/*
+ * 从数据库查找用户数据
+ */
+public class SqlConn {				
 	
 	private Connection conn = null;  
     private Statement stmt = null; 
@@ -25,7 +23,7 @@ public class SqlConn {
 			//String userDir = System.getProperty("user.dir");
 			//System.out.println(userDir);
 			
-			ConfigUtil cu = new ConfigUtil("../../workspace/Weixin/WebContent/WEB-INF/config.properties");
+			ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
 			String CONN_URL = cu.getValue("dbUrl");
 			String USERNAME = cu.getValue("dbUserName");
 			String PASSWORD = cu.getValue("dbPassword");			
@@ -86,7 +84,7 @@ public class SqlConn {
 		} 
     	this.deconnSQL();
     }
-     
+   //查找单个用户  
     public User selectUser(String openId){
     	String select = "select * from weixin_users where openid = '" +openId + "'";
     	User user = new User();
@@ -120,9 +118,9 @@ public class SqlConn {
     	this.deconnSQL();
     	return user;
     }
-    
+    //查找所有今日已签到的用户头像信息，用于签到人数及头像展示
     public String[] selectAllSign(){    	
-    	String selectAll = "select * from weixin_users where todaySign = 'true' order by lastSignTime";
+    	String selectAll = "select * from weixin_users where todaySign = 'true' order by lastSignTime desc";
     	String selectCount = "select count(*)  as countSign from (select * from weixin_users where todaySign = 'true' order by lastSignTime desc) as signCount";
     	try {	
     		this.connSQL();
@@ -154,7 +152,7 @@ public class SqlConn {
     	return null;
     	}
     
-    
+    //获取所有用户的积分排行，返回值为二维数组，包括用户的openid,昵称，头像，积分信息。
     public String[][] getPointsOrder(){
     	String selectAll = "select * from weixin_users order by points desc,lastSignTime desc";
     	String selectCount = "select count(*)  as userCounts from (select * from weixin_users order by points desc) as userCounts";
@@ -191,6 +189,18 @@ public class SqlConn {
 	    return null;
 	    	
     }
+    //获取单个用户在积分排行榜的名次
+    public int getOrder(String openId){
+    	String[][] pointsOrder = this.getPointsOrder();
+    	int i=0;
+    	for(i=0;i<pointsOrder.length;i++){
+    		if(pointsOrder[i][0].equals(openId))
+    			break;
+    	}
+    	
+    	return ++i;
+    }
+    //删除用户信息，用户取消关注时调用
     public void deleteUser(String openId){
     	String delete = "delete from weixin_users where openid= '" + openId +"'";      	
     	this.connSQL();		
@@ -203,7 +213,7 @@ public class SqlConn {
 		}		
     	this.deconnSQL();
     }
-    
+    //将数据库里所有todaySign值置为false，每日凌晨调用
     public void updateTodaySign(){
     	String update = "update weixin_users set todaySign = 'false'";
     	this.connSQL();		

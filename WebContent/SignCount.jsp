@@ -6,6 +6,7 @@
     	import="com.weixin.util.GetHtml"
     	import="com.weixin.servlet.TimeUpdate"
     	import="com.weixin.util.ConfigUtil"
+    	import="com.weixin.data.CreatTable"
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -23,7 +24,7 @@ p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:it
 		}
 .tab1{text-align:center;margin: 0px auto;height:230px;}
 .signImg{width:180px; height:180px; margin-bottom:8px; }
-.tab2{margin-top:10px;height:200px;}
+.tab2{margin-top:10px;height:110px;}
 .headImg {width:55px; height:55px;}
 .headImgDiv{border-radius:50%;overflow:hidden; }
 .headAll{float:left; margin:5px 5px;}
@@ -53,9 +54,9 @@ p {font-family:"黑体";font-size:26px;margin:0; font-weight:bold; font-style:it
     }
 </script>
 <script type="text/javascript">
-function orderclick(){
+function orderclick(openId){
     //alert("hi");
-    window.location.href="PointsOrder.jsp";  
+    window.location.href="PointsOrder.jsp?openid="+openId;  
 }
 function tuijian(url){	
     window.location.href = url;  	
@@ -65,7 +66,7 @@ function tuijian(url){
 	<%
 		//运行定时任务，在零点将所有用户的todaySign值置为false
 		TimeUpdate tu = new TimeUpdate();
-		tu.showTimer();
+		tu.showTimer();		
 		
 		String path = request.getContextPath();
 		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -99,7 +100,7 @@ function tuijian(url){
 			
 		</div>
 	</div>
-	<div class="tab tab2" onclick = "javascript:orderclick();">
+	<div class="tab tab2" onclick = "javascript:orderclick('<%=openId%>');">
 		<table>
 			<tr><td>
 			<div >
@@ -116,7 +117,7 @@ function tuijian(url){
 						<img class="headImg" alt="" src="<%=allSignHead[i]%>" >											
 					</div>
 			<%  
-				if(i>7) break;
+				if(i>3) break;
 				}%>
 				<h1 class="wenzi"><%if(i>7) out.println("...");%></h1>
 				
@@ -125,9 +126,7 @@ function tuijian(url){
 	</div>
 
 	<%		
-		//String userDir = System.getProperty("user.dir");
-		//System.out.println(userDir);
-		ConfigUtil cu = new ConfigUtil("../../workspace/Weixin/WebContent/WEB-INF/config.properties");
+		ConfigUtil cu = new ConfigUtil(CreatTable.configUrl);
 		String html_url = cu.getValue("tuijian"); 
 		String img_url = cu.getValue("imgUrl");
 		String[] html = GetHtml.getHtml(html_url);

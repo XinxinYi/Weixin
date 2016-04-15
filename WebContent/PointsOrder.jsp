@@ -20,7 +20,8 @@ table{border:0;border-spacing:0px;margin:0 15px;}
 
 .headFirstDiv{margin-left:40%;margin-top:15px;border-radius:50%;overflow:hidden;}
 .headFirst{width:70px;height:70px;}
-
+.mingci{font-family:"微软雅黑";font-size:14px; color:#666;margin-top:30px;}
+.firstTr{margin-bottom:100px;}
 .headImg {width:55px; height:55px;}
 .headImgDiv{border-radius:50%;overflow:hidden; }
 .headAll{float:left; margin:5px 5px;}
@@ -54,14 +55,45 @@ td {
 </script>
 <body>
 	<%
+		String path = request.getContextPath();
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+		String openId = request.getParameter("openid");//用request得到
+	
 		SqlConn sc = new SqlConn();
 		String[][] pointsOrder = sc.getPointsOrder();
+		
+		User user = new User();
+		user = sc.selectUser(openId);
+		String headImgUrl = user.getHeadimgurl();
+		int points = user.getPoints();
+		int userOrder = sc.getOrder(openId);
+		
+		//System.out.println(userOrder);
+		//System.out.println(openId);						
 	%>
 	<div class="headFirst headFirstDiv">		
 					<img class="headFirst" alt="" src="<%=pointsOrder[0][2]%>" >													
 	</div>
 	
+	
 	<table class="table">
+		<tr class="firstTr">
+		<td>
+			
+		</td>
+		<td class="td2">
+				<div class="headImg headImgDiv headAll">		
+					<img class="headImg" alt="" src="<%=headImgUrl%>" >												
+				</div>
+				<p class="mingci">第<%out.println(userOrder);%>名</p>	
+			</td>
+			
+			<td class="td3">
+				<%out.println(points);%>
+			</td>
+		</tr>
+		<tr></tr>
+	
 	<% //out.println(pointsOrder.length);
 		for(int i=0;i<pointsOrder.length;i++){
 			if(i>9) break;

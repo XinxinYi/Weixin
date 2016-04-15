@@ -6,6 +6,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.weixin.data.SqlConn;
+/*
+ * 定时更新数据库中的todaySign值，执行时间为每日23：59：59
+ */
 public class TimeUpdate {
 
 	static int count = 0;
@@ -18,7 +21,7 @@ public class TimeUpdate {
 				SqlConn sc = new SqlConn();
 				sc.updateTodaySign();
 				++count;
-				System.out.println("时间=" + new Date() + " 执行了" + count + "次"); // 1次
+				//System.out.println("时间=" + new Date() + " 执行了" + count + "次"); // 1次
 			}
 		};
 
@@ -31,7 +34,7 @@ public class TimeUpdate {
 		calendar.set(year, month, day, 23, 59, 59);
 		Date date = calendar.getTime();
 		Timer timer = new Timer();
-		System.out.println(date);
+		//System.out.println(date);
 		               
 		//int period = 2 * 1000;
 		//每天的date时刻执行task，每隔2秒重复执行
@@ -40,8 +43,10 @@ public class TimeUpdate {
 		timer.schedule(task, date);
 	}
 
+	
 	public static void main(String[] args) {
 	     showTimer();
+		
 	}
 	       
 }

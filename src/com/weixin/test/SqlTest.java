@@ -4,12 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import com.weixin.data.SqlConn;
-import com.weixin.util.WeixinUtil;
+import com.weixin.data.CreatTable;
 
 public class SqlTest {
 
@@ -43,13 +39,14 @@ public class SqlTest {
 		      //user 为你表的名称
 		     
 		  
-		      
+		      System.out.println(CreatTable.configUrl);
 		     
 		      
 		      
 		while (rs.next()) {
 		        System.out.println("openid:" + rs.getString("openid") + "  lastSignTime:" + rs.getString("lastSignTime") + "  SignCount: "+rs.getString("signCount") + "  SignAllCount:" + rs.getString("signAllCount") +  "   todaySign: "+rs.getString("todaySign"));
 		        System.out.println(rs.getString("headimgurl"));
+
 		        System.out.println("points:" + rs.getString("points"));
 		}
 		    }

@@ -22,7 +22,9 @@ import com.weixin.util.WeixinUtil;
 import java.util.concurrent.Executors;  
 import java.util.concurrent.ScheduledExecutorService;  
 import java.util.concurrent.TimeUnit; 
-
+/*
+ * 微信调用入口
+ */
 public class WeixinServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -35,8 +37,7 @@ public class WeixinServlet extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		if(CheckUtil.checkSignature(signature, timestamp, nonce)){
 			out.print(echostr);				
-		}
-		
+		}		
 		
 	}
 	protected void doPost(HttpServletRequest req,HttpServletResponse resp)
@@ -56,10 +57,12 @@ public class WeixinServlet extends HttpServlet {
 			
 			String message = null;
 			if(MessageUtil.MESSAGE_TEXT.equals(msgType)){				
+				//用户发送任何文本消息，则回复抱歉内容
 				message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.sorryText());											
 			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
-				String eventType = map.get("Event");				
-				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){					
+				String eventType = map.get("Event");			
+				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
+					//用户关注时，回复欢迎内容，并将用户加入数据库
 					String nickName = WeixinUtil.getUser(fromUserName).getNickname();
 					message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.subscribeText(nickName));						 
 					User user = new User();
